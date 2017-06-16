@@ -1,2 +1,2 @@
-# airavata_jupyter_demo
+# Airavata Jupyter Demo
 Jupyter notebook demos for Apache Airavata Python API currently under development 
