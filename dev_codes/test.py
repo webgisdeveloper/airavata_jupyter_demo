@@ -14,7 +14,7 @@ from thrift.protocol import TBinaryProtocol
 
 import configparser
 
-import sys
+import sys, os
 
 def get_transport(hostname, port):
     # Create a socket to the Airavata Server
@@ -59,8 +59,9 @@ def create_new_project(airavataClient, authzToken, gatewayID, username,projectna
     status = airavataClient.createProject(authzToken, gatewayID, projectobject)
     return status
 
-def get_authz_token_from_config(configfile='airavata-client.ini'):
+def get_authz_token_from_config():
     
+    configfile = get_user_configfile()
     config = configparser.ConfigParser()
     config.read(configfile)
     accessTokenURL = config['identity-server']['AccessTokenURL']
@@ -77,6 +78,7 @@ def get_authz_token_from_config(configfile='airavata-client.ini'):
     return authz_token
 
 def get_airavata_client_from_config(configfile='airavata-client.ini'):
+    configfile = get_user_configfile()
     config = configparser.ConfigParser()
     config.read(configfile)
     hostname = config['airavata-api-server']['Hostname']
@@ -130,6 +132,13 @@ def delete_user_project(authz_token, projectID):
     transport.close()
 
     return "Successful!"
+
+def get_user_configfile():
+    """ get user configfile for the testing """
+
+    userConfigfile  = os.path.expanduser("~/Projects/") + "airavata-client.ini"
+
+    return userConfigfile
     
 if __name__ == '__main__':
     
