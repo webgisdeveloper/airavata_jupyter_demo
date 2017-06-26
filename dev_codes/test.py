@@ -1,7 +1,9 @@
 
 from apache.airavata.api import Airavata
 from apache.airavata.api.ttypes import *
+from apache.airavata.model.experiment.ttypes import *
 from apache.airavata.model.workspace.ttypes import *
+from apache.airavata.model.experiment.ttypes import *
 from apache.airavata.model.security.ttypes import AuthzToken
 
 import requests
@@ -15,6 +17,8 @@ from thrift.protocol import TBinaryProtocol
 import configparser
 
 import sys, os
+
+
 
 def get_transport(hostname, port):
     # Create a socket to the Airavata Server
@@ -139,13 +143,25 @@ def get_user_configfile():
     userConfigfile  = os.path.expanduser("~/Projects/") + "airavata-client.ini"
 
     return userConfigfile
+
+def test_run_gaussian_experiment(authz_token):
+
+    # create an experiment
+    experiment = ExperimentModel()
+    print(dir(experiment))
+
+
     
 if __name__ == '__main__':
     
-    authz_token = get_authz_token_from_config()
-    print(authz_token)
+    authztoken = get_authz_token_from_config()
+    print(authztoken)
     
-    projects = get_user_projects(authz_token)
+    projects = get_user_projects(authztoken)
     print(projects)
-    sys.exit()
+    
+    # testing experiment
+    test_run_gaussian_experiment(authztoken)
+
+    sys.exit(0)
     
