@@ -207,8 +207,9 @@ if __name__ == '__main__':
     
     applications = get_all_application(authztoken)
     print(applications)
-    # testing experiment
-    #test_run_gaussian_experiment(authztoken)
+    
+    #testing experiment
+    test_run_gaussian_experiment(authztoken)
 
     sys.exit(0)
     
