@@ -4,6 +4,7 @@ from apache.airavata.api.ttypes import *
 from apache.airavata.model.experiment.ttypes import *
 from apache.airavata.model.workspace.ttypes import *
 from apache.airavata.model.experiment.ttypes import *
+from apache.airavata.model.application.io.ttypes import *
 from apache.airavata.model.security.ttypes import AuthzToken
 
 import requests
@@ -16,7 +17,7 @@ from thrift.protocol import TBinaryProtocol
 
 import configparser
 
-import sys, os
+import sys, os, json
 
 
 
@@ -62,6 +63,15 @@ def create_new_project(airavataClient, authzToken, gatewayID, username,projectna
     projectobject.description = projectdescription
     status = airavataClient.createProject(authzToken, gatewayID, projectobject)
     return status
+
+def get_storageid_from_config():
+
+    configfile = get_user_configfile()
+    config = configparser.ConfigParser()
+    config.read(configfile)
+    storageid = config['storage']['StorageID']
+
+    return storageid
 
 def get_authz_token_from_config():
     
@@ -146,10 +156,45 @@ def get_user_configfile():
 
 def test_run_gaussian_experiment(authz_token):
 
-    # create an experiment
+    # create sample experiment
     experiment = ExperimentModel()
-    print(dir(experiment))
+    
+    # skip experiment.experimentId
+    # use default project for the testing
+    projectname = "Default Project"
+    experiment.projectId = "DefaultProject_01720113-3d7c-4020-ba83-2c977ae5c3ba"
+    experiment.gatewayId = authz_token.claimsMap['gatewayID']
+    experiment.experimentType = ExperimentType.SINGLE_APPLICATION
+    experiment.userName = authz_token.claimsMap['userName']
+    experiment.experimentName = "GaussianTestJob01"
+    experiment.description = "Gaussian Test Job 01"
+    # list of InputDataObjectType
+    experiment.experimentInputs = ""
 
+    # register input data
+    # StoragePath = $user/$projectname/$experimentname
+    # input path Gaussian.com
+    inputfile = "Gaussian.com"
+    inputdata = InputDataObjectType()
+    inputdata.name = "gaussian"
+    inputdata.type = DataType.URI
+    inputdata.storageResourceId = get_storageid_from_config()
+    inputdata.value = os.path.join(experiment.userName,projectname,experiment.experimentName,inputfile)
+    print (inputdata)
+
+def get_all_application(authz_token):
+
+    gatewayID = authz_token.claimsMap['gatewayID']
+
+    hostname, port = get_airavata_client_from_config()
+    transport = get_transport(hostname, port)
+    transport.open()
+    airavataClient = get_airavata_client(transport)
+    applications = airavataClient.getAllApplicationDeployments(authz_token,gatewayID)
+    
+    transport.close()
+
+    return applications
 
     
 if __name__ == '__main__':
@@ -160,8 +205,10 @@ if __name__ == '__main__':
     projects = get_user_projects(authztoken)
     print(projects)
     
+    applications = get_all_application(authztoken)
+    print(applications)
     # testing experiment
-    test_run_gaussian_experiment(authztoken)
+    #test_run_gaussian_experiment(authztoken)
 
     sys.exit(0)
     
