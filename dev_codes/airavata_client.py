@@ -75,7 +75,7 @@ class AiravataClient():
         self.gatewayid = self.authztoken.claimsMap['gatewayID']
         self.username =  self.authztoken.claimsMap['userName']
 
-        print(self.username + " has been authoried to access " + self.gatewayid)
+        print(self.username + " has been authorized to access " + self.gatewayid)
 
         return 
 
