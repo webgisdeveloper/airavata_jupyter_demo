@@ -8,7 +8,8 @@ def main():
 	
 	ac = AiravataClient(configfile = '~/Projects/airavata-client.ini')
 	print(ac.getprojects())
-	ac.createproject("Test01","Testing project for Gaussian application")
-	
+	#ac.createproject("Test01","Testing project for Gaussian application")
+	print(ac.isnotebook())
+
 if __name__ == '__main__':
 	main()

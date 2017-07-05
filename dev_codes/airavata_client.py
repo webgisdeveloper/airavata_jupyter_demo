@@ -141,5 +141,30 @@ class AiravataClient():
 
         self.__close_connection()
 
+    def deleteproject(self,projectid=""):
+
+        self.__open_connection()
+
+        status = self.apiclient.deleteProject(self.authztoken, projectid)
+
+        if status:
+            print("Successed to delete the project: " + projectid)
+        else:
+            print("Failed to delete the project: " + projectid)
+
+        self.__close_connection()
+
+
+    def isnotebook(self):
+        try:
+            shell = get_ipython().__class__.__name__
+            if shell == 'ZMQInteractiveShell':
+                return True   # Jupyter notebook or qtconsole
+            elif shell == 'TerminalInteractiveShell':
+                return False  # Terminal running IPython
+            else:
+                return False  # Other type (?)
+        except NameError:
+            return False      # Probably standard Python interpreter
 
 
