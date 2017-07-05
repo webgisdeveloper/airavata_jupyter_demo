@@ -38,6 +38,11 @@ class AiravataClient():
         self.authztoken = ""
         self.username = ""
         self.gatewayid = ""
+        self.apiserverhostname = ""
+        self.apiserverport = ""
+
+        self.transport = ""
+        self.apiclient = ""
 
         if configfile != "":
             self.initwithconfigfile(configfile)
@@ -53,8 +58,32 @@ class AiravataClient():
     
         return AuthzToken(accessToken=access_token, claimsMap={'gatewayID': gatewayID, 'userName': user_info_req.json()['sub']})
 
+    def __get_transport(self):
+        # Create a socket to the Airavata Server
+        transport = TSSLSocket.TSSLSocket(self.apiserverhostname, self.apiserverport, validate=False)
+
+        # Use Buffered Protocol to speedup over raw sockets
+        self.transport = TTransport.TBufferedTransport(transport)
+    
+    def __get_apiserverclient(self):
+
+        # Airavata currently uses Binary Protocol
+        protocol = TBinaryProtocol.TBinaryProtocol(self.transport)
+
+        # Create a Airavata client to use the protocol encoder
+        self.apiclient = Airavata.Client(protocol)
+
+
+    def __open_connection(self):
+
+        self.transport.open()
+
+    def __close_connection(self):
+
+        self.transport.close()
 
     def initwithconfigfile(self, configfile):
+
    
         self.configfile = os.path.expanduser(configfile)
         config = configparser.ConfigParser()
@@ -77,7 +106,40 @@ class AiravataClient():
 
         print(self.username + " has been authorized to access " + self.gatewayid)
 
-        return 
+        self.apiserverhostname = config['airavata-api-server']['Hostname']
+        self.apiserverport = config['airavata-api-server']['Port']
+
+        self.__get_transport()
+        self.__get_apiserverclient()
+
+    def getprojects(self):
+        """get all or partial project list"""
+
+        self.__open_connection()
+
+        projectlists = self.apiclient.getUserProjects(self.authztoken, self.gatewayid, self.username, -1, 0)
+
+        self.__close_connection()
+
+        return projectlists
+
+    def createproject(self, projectname="", projectdescription=""):
+
+        self.__open_connection()
+
+        projectobject = Project()
+        projectobject.owner = self.username
+        projectobject.gatewayId = self.gatewayid
+        projectobject.name = projectname
+        projectobject.description = projectdescription
+        status = self.apiclient.createProject(self.authztoken, self.gatewayid, projectobject)
+
+        if status:
+            print("Successed to create the project: " + projectname)
+        else:
+            print("Failed to create the project: " + projectname)
+
+        self.__close_connection()
 
 
 
