@@ -42,7 +42,6 @@ def get_authz_token(accessTokenURL, userInfoURL, clientKey, clientSecret, userna
     
     request_data = {'grant_type': 'password', 'scope': 'openid', 'username': username, 'password': password}
     access_token_req = requests.post(accessTokenURL, auth=(clientKey, clientSecret), data=request_data, verify=False)
-    print(access_token_req)
     access_token = access_token_req.json()['access_token']
     user_info_req = requests.get(userInfoURL, headers={'Authorization': "Bearer " + access_token}, verify=False)
     
