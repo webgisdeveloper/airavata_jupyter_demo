@@ -194,20 +194,29 @@ class AiravataClient():
         return experimentid
 
 
-
     def launchexperiment(self,experimentid):
 
         self.__open_connection()
 
         status = self.apiclient.validateExperiment(self.authztoken, experimentid)
 
-        if status == True:
+        if status:
             self.apiclient.launchExperiment(self.authztoken, experimentid, self.gatewayid)
         else:
             print("Not validated: ", experimentid)
         
         self.__close_connection()
 
+    def getexperimentstatus(self,experimentid):
+        
+        self.__open_connection()
+
+        #ExperimentStatus
+        experimentstatus = self.apiclient.getExperimentStatus(self.authztoken, experimentid)
+
+        self.__close_connection()
+
+        return experimentstatus
 
     def sampleexperiment(self):
         """define a simple Gaussion application"""

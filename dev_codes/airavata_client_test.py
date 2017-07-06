@@ -19,6 +19,7 @@ def main():
 	#print(exid)
 	exid = "GaussianTestJob01_d71be9c6-4e69-431c-91b2-6ab70aff68ed"
 	ac.launchexperiment(exid)
+	print(ac.getexperimentstatus(exid))
 
 if __name__ == '__main__':
 	main()
