@@ -10,7 +10,8 @@ from apache.airavata.api import Airavata
 from apache.airavata.api.ttypes import *
 from apache.airavata.model.experiment.ttypes import *
 from apache.airavata.model.workspace.ttypes import *
-from apache.airavata.model.experiment.ttypes import *
+from apache.airavata.model.data.replica.ttypes import *
+from apache.airavata.model.scheduling.ttypes import *
 from apache.airavata.model.application.io.ttypes import *
 from apache.airavata.model.security.ttypes import AuthzToken
 
@@ -169,9 +170,104 @@ class AiravataClient():
             applists_flitered = []
             for item in applists:
                 if module.lower() in item.appModuleId.lower():
-                    applists_flitered.append(item.computeHostId)
+                    applists_flitered.append([item.appModuleId,item.appDeploymentId,item.computeHostId])
             return applists_flitered
  
+    def registerinputfile(self, dataproduct):
+
+        self.__open_connection()
+
+        uri = self.apiclient.registerDataProduct(self.authztoken, dataproduct)
+        
+        self.__close_connection()
+
+        return uri
+
+    def createexperiment(self, experiment):
+
+        self.__open_connection()
+
+        experimentid = self.apiclient.createExperiment(self.authztoken, self.gatewayid, experiment)
+        
+        self.__close_connection()
+
+        return experimentid
+
+
+
+    def launchexperiment(self,experimentid):
+
+        self.__open_connection()
+
+        status = self.apiclient.validateExperiment(self.authztoken, experimentid)
+
+        if status == True:
+            self.apiclient.launchExperiment(self.authztoken, experimentid, self.gatewayid)
+        else:
+            print("Not validated: ", experimentid)
+        
+        self.__close_connection()
+
+
+    def sampleexperiment(self):
+        """define a simple Gaussion application"""
+
+        experiment = ExperimentModel()
+    
+        # skip experiment.experimentId
+        # use default project for the testing
+        projectname = "DefaultProject"
+        experiment.projectId = "DefaultProject_01720113-3d7c-4020-ba83-2c977ae5c3ba"
+        experiment.gatewayId = self.gatewayid
+        experiment.experimentType = ExperimentType.SINGLE_APPLICATION
+        experiment.userName = self.username
+        experiment.experimentName = "GaussianTestJob01"
+        experiment.description = "Gaussian Test Job 01"
+
+        # register input file
+        gefile = DataProductModel()
+        gefile.gatewayId = self.gatewayid
+        gefile.ownerName = self.username
+        gefile.productName = "Gaussian.com"
+        gefile.dataProductType = DataProductType.FILE
+
+        gest = DataReplicaLocationModel()
+        gest.storageResourceId = "156.56.177.220_aac7149e-d642-4849-9c2a-020c8af8419e"
+        gest.replicaName = "Gaussian.com"
+        gest.replicaLocationCategory = ReplicaLocationCategory.GATEWAY_DATA_STORE 
+        gest.replicaPersistentType = ReplicaPersistentType.TRANSIENT
+        storagehost = "156.56.177.220"
+        gest.filePath = "file://" + storagehost + ":" + self.username + "/" + projectname + "/" + experiment.experimentName + "/Gaussian.com"
+
+        gefile.replicaLocations = [gest]
+
+        #uri = self.registerinputfile(gefile)
+        uri = "airavata-dp://57f9fb47-c09e-4421-8a3c-8f8a1bd5a771"
+        inputobj = InputDataObjectType()
+        inputobj.name = "Gaussian.com"
+        inputobj.type = DataType.URI
+        inputobj.value = uri
+        
+        experiment.experimentInputs = [inputobj]
+        # appModuleId ='Gaussian_57eb2905-1cd8-400e-ad40-cadfba8f434f'
+        # computeHostId = 'comet.sdsc.edu_91b900df-0ee0-4909-89b3-98e8f64e1969'
+        # appDeploymentId = 'comet.sdsc.edu_Gaussian_57eb2905-1cd8-400e-ad40-cadfba8f434f'
+        experiment.excutionId = 'comet.sdsc.edu_Gaussian_57eb2905-1cd8-400e-ad40-cadfba8f434f'
+
+        # schedule reosurce
+        ucdm = UserConfigurationDataModel()
+        crsm = ComputationalResourceSchedulingModel()
+        crsm.resourceHostId = 'comet.sdsc.edu_91b900df-0ee0-4909-89b3-98e8f64e1969'
+        # queue = shared node=1 corecount=4 walltimelimit = 30
+        crsm.totalCPUCount = 4
+        crsm.nodeCount = 1
+        crsm.wallTimeLimit = 30
+        queueName = "shared"
+        ucdm.computationalResourceScheduling = crsm
+
+        experiment.userConfigurationData = ucdm
+
+        return experiment
 
     def isnotebook(self):
         try:
@@ -184,5 +280,6 @@ class AiravataClient():
                 return False  # Other type (?)
         except NameError:
             return False      # Probably standard Python interpreter
+
 
 
