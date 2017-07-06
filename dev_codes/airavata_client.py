@@ -45,6 +45,10 @@ class AiravataClient():
         self.transport = ""
         self.apiclient = ""
 
+        self.storagehost = ""
+        self.storageid = ""
+        self.storageroot = ""
+
         if configfile != "":
             self.initwithconfigfile(configfile)
         else:
@@ -112,6 +116,11 @@ class AiravataClient():
 
         self.__get_transport()
         self.__get_apiserverclient()
+
+        # storage
+        self.storagehost = config['storage']['StorageHost']
+        self.storageid = config['storage']['StorageID']
+        self.storageroot = config['storage']['StorageRoot']
 
     def getprojects(self):
         """get all or partial project list"""
@@ -284,12 +293,12 @@ class AiravataClient():
         gefile.dataProductType = DataProductType.FILE
 
         gest = DataReplicaLocationModel()
-        gest.storageResourceId = "156.56.177.220_aac7149e-d642-4849-9c2a-020c8af8419e"
+        gest.storageResourceId = self.storageid
         gest.replicaName = "Gaussian.com"
         gest.replicaLocationCategory = ReplicaLocationCategory.GATEWAY_DATA_STORE 
         gest.replicaPersistentType = ReplicaPersistentType.TRANSIENT
-        storagehost = "156.56.177.220"
-        gest.filePath = '/home/wang208/airavata-data-dir' + self.username + "/" + projectname + "/" + experiment.experimentName + "/Gaussian.com"
+        #storagehost = self.storagehost
+        gest.filePath = self.storageroot + "/" + self.username + "/" + projectname + "/" + experiment.experimentName + "/Gaussian.com"
 
         gefile.replicaLocations = [gest]
 
