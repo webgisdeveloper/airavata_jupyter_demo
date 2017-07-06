@@ -154,6 +154,24 @@ class AiravataClient():
 
         self.__close_connection()
 
+    def getapplications(self, module=""):
+        """get all or partial project list"""
+
+        self.__open_connection()
+
+        applists = self.apiclient.getAllApplicationDeployments(self.authztoken, self.gatewayid)
+
+        self.__close_connection()
+
+        if module == "":
+            return applists
+        else:    
+            applists_flitered = []
+            for item in applists:
+                if module.lower() in item.appModuleId.lower():
+                    applists_flitered.append(item.computeHostId)
+            return applists_flitered
+ 
 
     def isnotebook(self):
         try:
