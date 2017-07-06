@@ -172,7 +172,27 @@ class AiravataClient():
                 if module.lower() in item.appModuleId.lower():
                     applists_flitered.append([item.appModuleId,item.appDeploymentId,item.computeHostId])
             return applists_flitered
- 
+    
+    def getapplicationinterfaces(self,appname=""):
+
+        self.__open_connection()
+        
+        appinterfacelist = self.apiclient.getAllApplicationInterfaces(self.authztoken,self.gatewayid)
+        
+        self.__close_connection()
+
+        if appname == "":
+            return appinterfacelist
+        else:
+            appinterfacelist_filtered = []
+            for item in appinterfacelist:
+                if appname.lower() in item.applicationName.lower():
+                    appinterfacelist_filtered.append([item.applicationName,item.applicationInterfaceId])
+            return appinterfacelist_filtered
+
+
+        return appinterfacelist            
+    
     def registerinputfile(self, dataproduct):
 
         self.__open_connection()
@@ -201,11 +221,23 @@ class AiravataClient():
         status = self.apiclient.validateExperiment(self.authztoken, experimentid)
 
         if status:
+            print("launch: ", experimentid)
             self.apiclient.launchExperiment(self.authztoken, experimentid, self.gatewayid)
         else:
             print("Not validated: ", experimentid)
         
         self.__close_connection()
+
+    def getexperiment(self,experimentid):
+        
+        self.__open_connection()
+
+        #experiment
+        experiment = self.apiclient.getExperiment(self.authztoken, experimentid)
+
+        self.__close_connection()
+
+        return experiment
 
     def getexperimentstatus(self,experimentid):
         
@@ -217,6 +249,17 @@ class AiravataClient():
         self.__close_connection()
 
         return experimentstatus
+
+    def getexperimentoutputs(self,experimentid):
+        
+        self.__open_connection()
+
+        #ExperimentStatus
+        experimentoutputs = self.apiclient.getExperimentOutputs(self.authztoken, experimentid)
+
+        self.__close_connection()
+
+        return experimentoutputs
 
     def sampleexperiment(self):
         """define a simple Gaussion application"""
@@ -246,12 +289,12 @@ class AiravataClient():
         gest.replicaLocationCategory = ReplicaLocationCategory.GATEWAY_DATA_STORE 
         gest.replicaPersistentType = ReplicaPersistentType.TRANSIENT
         storagehost = "156.56.177.220"
-        gest.filePath = "file://" + storagehost + ":" + self.username + "/" + projectname + "/" + experiment.experimentName + "/Gaussian.com"
+        gest.filePath = '/home/wang208/airavata-data-dir' + self.username + "/" + projectname + "/" + experiment.experimentName + "/Gaussian.com"
 
         gefile.replicaLocations = [gest]
 
-        #uri = self.registerinputfile(gefile)
-        uri = "airavata-dp://57f9fb47-c09e-4421-8a3c-8f8a1bd5a771"
+        uri = self.registerinputfile(gefile)
+        #uri = "airavata-dp://57f9fb47-c09e-4421-8a3c-8f8a1bd5a771"
         inputobj = InputDataObjectType()
         inputobj.name = "Gaussian.com"
         inputobj.type = DataType.URI
@@ -261,7 +304,8 @@ class AiravataClient():
         # appModuleId ='Gaussian_57eb2905-1cd8-400e-ad40-cadfba8f434f'
         # computeHostId = 'comet.sdsc.edu_91b900df-0ee0-4909-89b3-98e8f64e1969'
         # appDeploymentId = 'comet.sdsc.edu_Gaussian_57eb2905-1cd8-400e-ad40-cadfba8f434f'
-        experiment.excutionId = 'comet.sdsc.edu_Gaussian_57eb2905-1cd8-400e-ad40-cadfba8f434f'
+        # should use applicationid
+        experiment.executionId = 'Gaussian_bd41aa7e-5ec0-4a11-a321-f35ba8bfce91'
 
         # schedule reosurce
         ucdm = UserConfigurationDataModel()
@@ -271,7 +315,7 @@ class AiravataClient():
         crsm.totalCPUCount = 4
         crsm.nodeCount = 1
         crsm.wallTimeLimit = 30
-        queueName = "shared"
+        crsm.queueName = "shared"
         ucdm.computationalResourceScheduling = crsm
 
         experiment.userConfigurationData = ucdm
