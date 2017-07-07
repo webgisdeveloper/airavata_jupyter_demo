@@ -1,0 +1,40 @@
+# Installation Note on Mac
+1. Python3
+got the latest Python3.x for mac
+https://www.python.org/ftp/python/3.6.1/python-3.6.1-macosx10.6.pkg
+
+2. check out airavata-python3-client
+git clone https://github.com/machristie/airavata-python3-client
+
+more info:
+https://github.com/machristie/airavata-python3-client
+
+3. create python virtual enviroment
+
+python3 -m venv ENV
+. ENV/bin/activate
+
+go to airavata-python3-client
+pip install -r requirements.txt
+pip install jupyter
+
+4. create links to airavata-python3-client library
+navigate to Python ENV folder: ENV/lib/python3.6/site-packages
+create symbolink apache -> ~/Projects/airavata-python3-client/apache
+example:
+ln -s ~/Projects/airavata-python3-client/apache apache
+ln -s ~/Projects/airavata-python3-client/credential_store_data_models credential_store_data_models
+
+5. modify airavata-client.ini
+chenage username adn password, put it somewhere safe and outside git repo.
+
+6. checkout jupyter_notebook_demo
+git clone https://github.com/webgisdeveloper/airavata_jupyter_demo.git
+
+7 in dev_codes folder
+jupyter notebook
+
+8 open airavata_client_demo.ipynb
+ac = AiravataClient(configfile = '~/Projects/airavata-client.ini')
+update this code with the new ini file.
+
