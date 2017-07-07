@@ -32,10 +32,10 @@ def main():
 	#exid ="GaussianTestJob01_7b6080c9-6029-425d-bf89-9f9143f6caec"
 	#print(exid)
 	#print(ac.getexperiment(exid))
-	#ac.launchexperiment(exid)
-	#time.sleep(10)
-	#print(ac.getexperimentstatus(exid))
-	#print(ac.getexperimentoutputs(exid))
+	ac.launchexperiment(exid)
+	time.sleep(20)
+	print(ac.getexperimentstatus(exid))
+	print(ac.getexperimentoutputs(exid))
 
 if __name__ == '__main__':
 	main()

@@ -25,7 +25,7 @@ from thrift.protocol import TBinaryProtocol
 
 import configparser
 
-import sys, os, json
+import sys, os, json, random
 
 
 class AiravataClient():
@@ -343,14 +343,15 @@ class AiravataClient():
     
         # skip experiment.experimentId
         # use default project for the testing
-        projectname = "Default Project"
+        projectname = "DemoProject"
         projectid = self.getprojects(projectname=projectname, idonly=True)[0]
         experiment.projectId = projectid
         experiment.gatewayId = self.gatewayid
         experiment.experimentType = ExperimentType.SINGLE_APPLICATION
         experiment.userName = self.username
-        experiment.experimentName = "GaussianTestJob01"
-        experiment.description = "Gaussian Test Job 01"
+        randomexname = "GaussianTestJob" + str(random.randint(2,100))
+        experiment.experimentName = randomexname
+        experiment.description = "Gaussian Experiment Sample" 
 
         # register input file
         gefile = DataProductModel()
@@ -364,14 +365,18 @@ class AiravataClient():
         gest.replicaName = "Gaussian.com"
         gest.replicaLocationCategory = ReplicaLocationCategory.GATEWAY_DATA_STORE 
         gest.replicaPersistentType = ReplicaPersistentType.TRANSIENT
-        #storagehost = self.storagehost
+        storagehost = self.storagehost
         workingdir = self.storageroot + "/" + self.username + "/" + projectname + "/" + experiment.experimentName + "/"
-        gest.filePath = workingdir + "Gaussian.com"
+        #gest.filePath = workingdir + "Gaussian.com"
+        #"file://" . $hostName . ":" . $filePath;
+        gest.filePath = "file://" + self.storagehost + ":" + workingdir + "Gaussian.com"
+        #print(gest.filePath)
 
         gefile.replicaLocations = [gest]
 
         uri = self.registerinputfile(gefile)
-        #uri = "airavata-dp://57f9fb47-c09e-4421-8a3c-8f8a1bd5a771"
+        # this a good uri example
+        #uri = "airavata-dp://37b07a00-e75c-4399-8ec3-4c0e8b7691b2"
         inputobj = InputDataObjectType()
         inputobj.name = "Gaussian.com"
         inputobj.type = DataType.URI
@@ -404,6 +409,8 @@ class AiravataClient():
         ucdm.storageId = self.storageid
         ucdm.experimentDataDir = workingdir
         experiment.userConfigurationData = ucdm
+
+        print("generating a sample experiment: ", randomexname)
 
         return experiment
 
