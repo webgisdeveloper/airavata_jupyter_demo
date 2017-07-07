@@ -55,13 +55,18 @@ class AiravataClient():
             print("Empty client created! pleae use initwithconfigfile!")
 
     def __get_authz_token(self, accessTokenURL, userInfoURL, clientKey, clientSecret, username, password, gatewayID):
-    
+
         request_data = {'grant_type': 'password', 'scope': 'openid', 'username': username, 'password': password}
         access_token_req = requests.post(accessTokenURL, auth=(clientKey, clientSecret), data=request_data, verify=False)
-        access_token = access_token_req.json()['access_token']
+        access_token_json = access_token_req.json()
+        if 'access_token' not in access_token_json:
+            raise Exception("Failed to get access_token: {}".format(access_token_json))
+        access_token = access_token_json['access_token']
         user_info_req = requests.get(userInfoURL, headers={'Authorization': "Bearer " + access_token}, verify=False)
-    
-        return AuthzToken(accessToken=access_token, claimsMap={'gatewayID': gatewayID, 'userName': user_info_req.json()['sub']})
+
+        username_claim = 'preferred_username'
+
+        return AuthzToken(accessToken=access_token, claimsMap={'gatewayID': gatewayID, 'userName': user_info_req.json()[username_claim]})
 
     def __get_transport(self):
         # Create a socket to the Airavata Server
@@ -105,7 +110,7 @@ class AiravataClient():
         password = config['credentials']['Password']
         gatewayID = config['credentials']['GatewayID']
     
-        self.authztoken = self.__get_authz_token(accessTokenURL, userInfoURL, clientKey, clientSecret, username + "@" + tenantDomain, password, gatewayID)
+        self.authztoken = self.__get_authz_token(accessTokenURL, userInfoURL, clientKey, clientSecret, username, password, gatewayID)
         self.gatewayid = self.authztoken.claimsMap['gatewayID']
         self.username =  self.authztoken.claimsMap['userName']
 
