@@ -68,6 +68,7 @@ class AiravataClient():
 
         return AuthzToken(accessToken=access_token, claimsMap={'gatewayID': gatewayID, 'userName': user_info_req.json()[username_claim]})
 
+   
     def __get_transport(self):
         # Create a socket to the Airavata Server
         transport = TSSLSocket.TSSLSocket(self.apiserverhostname, self.apiserverport, validate=False)
@@ -75,6 +76,7 @@ class AiravataClient():
         # Use Buffered Protocol to speedup over raw sockets
         self.transport = TTransport.TBufferedTransport(transport)
     
+   
     def __get_apiserverclient(self):
 
         # Airavata currently uses Binary Protocol
@@ -88,13 +90,14 @@ class AiravataClient():
 
         self.transport.open()
 
+
     def __close_connection(self):
 
         self.transport.close()
 
+
     def initwithconfigfile(self, configfile):
 
-   
         self.configfile = os.path.expanduser(configfile)
         config = configparser.ConfigParser()
 
@@ -127,16 +130,28 @@ class AiravataClient():
         self.storageid = config['storage']['StorageID']
         self.storageroot = config['storage']['StorageRoot']
 
-    def getprojects(self):
+
+    def getprojects(self, projectname = "", idonly=False):
         """get all or partial project list"""
 
         self.__open_connection()
 
-        projectlists = self.apiclient.getUserProjects(self.authztoken, self.gatewayid, self.username, -1, 0)
+        projectlist = self.apiclient.getUserProjects(self.authztoken, self.gatewayid, self.username, -1, 0)
 
         self.__close_connection()
 
-        return projectlists
+        if projectname == '':
+            return projectlist
+        else:
+            projectlist_filtered = []
+            for item in projectlist:
+                if projectname.lower() in item.name.lower():
+                    if idonly:
+                        projectlist_filtered.append(item.projectID)
+                    else:
+                        projectlist_filtered.append(item)
+            return projectlist_filtered
+
 
     def createproject(self, projectname="", projectdescription=""):
 
@@ -156,6 +171,7 @@ class AiravataClient():
 
         self.__close_connection()
 
+
     def deleteproject(self,projectid=""):
 
         self.__open_connection()
@@ -169,7 +185,8 @@ class AiravataClient():
 
         self.__close_connection()
 
-    def getapplications(self, module=""):
+
+    def getapplications(self, appname=""):
         """get all or partial project list"""
 
         self.__open_connection()
@@ -178,16 +195,17 @@ class AiravataClient():
 
         self.__close_connection()
 
-        if module == "":
+        if appname == "":
             return applists
         else:    
             applists_flitered = []
             for item in applists:
-                if module.lower() in item.appModuleId.lower():
+                if appname.lower() in item.appModuleId.lower():
                     applists_flitered.append([item.appModuleId,item.appDeploymentId,item.computeHostId])
             return applists_flitered
     
-    def getapplicationinterfaces(self,appname=""):
+
+    def getapplicationinterfaces(self,appname="",idonly=False):
 
         self.__open_connection()
         
@@ -201,12 +219,16 @@ class AiravataClient():
             appinterfacelist_filtered = []
             for item in appinterfacelist:
                 if appname.lower() in item.applicationName.lower():
-                    appinterfacelist_filtered.append([item.applicationName,item.applicationInterfaceId])
+                    if idonly:
+                        appinterfacelist_filtered.append(item.applicationInterfaceId)
+                    else:
+                        appinterfacelist_filtered.append(item)
+                        
             return appinterfacelist_filtered
-
 
         return appinterfacelist            
     
+
     def registerinputfile(self, dataproduct):
 
         self.__open_connection()
@@ -216,6 +238,7 @@ class AiravataClient():
         self.__close_connection()
 
         return uri
+
 
     def createexperiment(self, experiment):
 
@@ -242,7 +265,29 @@ class AiravataClient():
         
         self.__close_connection()
 
-    def getexperiment(self,experimentid):
+  
+    def getexperiments(self,experimentname='',idonly=False):
+
+        self.__open_connection()
+
+        experimentlist = self.apiclient.getUserExperiments(self.authztoken, self.gatewayid, self.username, -1, 0)
+
+        self.__close_connection()
+
+        if experimentname == "":
+            return experimentlist
+        else:
+            experimentlist_filtered = []
+            for item in experimentlist:
+                if experimentname.lower() in item.experimentName.lower():
+                    if idonly:
+                        experimentlist_filtered.append(item.experimentId)
+                    else:
+                        experimentlist_filtered.append(item)
+            return experimentlist_filtered
+
+
+    def getexperimentbyid(self,experimentid):
         
         self.__open_connection()
 
@@ -253,6 +298,7 @@ class AiravataClient():
 
         return experiment
 
+  
     def getexperimentstatus(self,experimentid):
         
         self.__open_connection()
@@ -264,6 +310,7 @@ class AiravataClient():
 
         return experimentstatus
 
+    
     def getexperimentoutputs(self,experimentid):
         
         self.__open_connection()
@@ -275,6 +322,20 @@ class AiravataClient():
 
         return experimentoutputs
 
+
+    def getstorages(self, storageid=""):
+
+        self.__open_connection()
+
+        if storageid == "":
+            storagelist = self.apiclient.getAllStorageResourceNames(self.authztoken)
+        else:
+            storagelist = self.apiclient.getStorageResource(self.authztoken,storageid)
+
+        self.__close_connection()
+
+        return storagelist
+
     def sampleexperiment(self):
         """define a simple Gaussion application"""
 
@@ -282,8 +343,9 @@ class AiravataClient():
     
         # skip experiment.experimentId
         # use default project for the testing
-        projectname = "DefaultProject"
-        experiment.projectId = "DefaultProject_01720113-3d7c-4020-ba83-2c977ae5c3ba"
+        projectname = "Default Project"
+        projectid = self.getprojects(projectname=projectname, idonly=True)[0]
+        experiment.projectId = projectid
         experiment.gatewayId = self.gatewayid
         experiment.experimentType = ExperimentType.SINGLE_APPLICATION
         experiment.userName = self.username
@@ -303,7 +365,8 @@ class AiravataClient():
         gest.replicaLocationCategory = ReplicaLocationCategory.GATEWAY_DATA_STORE 
         gest.replicaPersistentType = ReplicaPersistentType.TRANSIENT
         #storagehost = self.storagehost
-        gest.filePath = self.storageroot + "/" + self.username + "/" + projectname + "/" + experiment.experimentName + "/Gaussian.com"
+        workingdir = self.storageroot + "/" + self.username + "/" + projectname + "/" + experiment.experimentName + "/"
+        gest.filePath = workingdir + "Gaussian.com"
 
         gefile.replicaLocations = [gest]
 
@@ -313,13 +376,18 @@ class AiravataClient():
         inputobj.name = "Gaussian.com"
         inputobj.type = DataType.URI
         inputobj.value = uri
+        inputobj.inputOrder=1
+        inputobj.isRequired=True
+        inputobj.requiredToAddedToCommandLine=True
+        inputobj.storageResourceId = self.storageid
         
         experiment.experimentInputs = [inputobj]
         # appModuleId ='Gaussian_57eb2905-1cd8-400e-ad40-cadfba8f434f'
         # computeHostId = 'comet.sdsc.edu_91b900df-0ee0-4909-89b3-98e8f64e1969'
         # appDeploymentId = 'comet.sdsc.edu_Gaussian_57eb2905-1cd8-400e-ad40-cadfba8f434f'
         # should use applicationid
-        experiment.executionId = 'Gaussian_bd41aa7e-5ec0-4a11-a321-f35ba8bfce91'
+        appinterfaceid = self.getapplicationinterfaces(appname = "Gaussian",idonly=True)[0]
+        experiment.executionId = appinterfaceid
 
         # schedule reosurce
         ucdm = UserConfigurationDataModel()
@@ -328,14 +396,18 @@ class AiravataClient():
         # queue = shared node=1 corecount=4 walltimelimit = 30
         crsm.totalCPUCount = 4
         crsm.nodeCount = 1
+        crsm.numberOfThreads = 0
+        crsm.totalPhysicalMemory = 0
         crsm.wallTimeLimit = 30
         crsm.queueName = "shared"
         ucdm.computationalResourceScheduling = crsm
-
+        ucdm.storageId = self.storageid
+        ucdm.experimentDataDir = workingdir
         experiment.userConfigurationData = ucdm
 
         return experiment
 
+   
     def isnotebook(self):
         try:
             shell = get_ipython().__class__.__name__
