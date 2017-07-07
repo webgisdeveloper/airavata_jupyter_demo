@@ -162,6 +162,7 @@ class AiravataClient():
         projectobject.gatewayId = self.gatewayid
         projectobject.name = projectname
         projectobject.description = projectdescription
+        
         status = self.apiclient.createProject(self.authztoken, self.gatewayid, projectobject)
 
         if status:
