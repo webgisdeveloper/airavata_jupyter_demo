@@ -4,3 +4,7 @@ The ["Estimating the Circulation and Climate of the Ocean" (ECCO)](https://ecco-
 ## ECCO Central Production Version 4 Release 4
 [ECCO Version 4 release 4 (V4r4)](https://ecco-group.org/products-ECCO-V4r4.htm), covering the period 1992-2017, represents ECCO's latest ocean state estimate.
 
+The ECCO v4 state estimate is the output of a free-running simulation of a global ca. 1-degree configuration of the [MITgcm](https://mitgcm.readthedocs.io/en/latest/).
+
+### Tutorials
+[ECCO Version 4 Tutorial](https://ecco-v4-python-tutorial.readthedocs.io/)  
