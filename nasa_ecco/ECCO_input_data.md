@@ -1,5 +1,4 @@
-# ECCO Data
-## ECCO input data to run the model
+# ECCO Input Data to run the model
 
 The forcing and other input files are stored on Release 4’s data server at  
 https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/  
@@ -64,4 +63,4 @@ provided [data.diagnostics files](https://ecco.jpl.nasa.gov/drive/files/Version4
 job on a different machine or to output significantly more model diagnostics. [Available_Diagnostics](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/doc/available_diagnostics.log)  
 
 reference: [V4r4 Reproduction Guide](https://ecco-group.org/docs/v4r4_reproduction_howto.pdf)
-## ECCO output data
+
