@@ -26,7 +26,6 @@ All forcing and input files are necessary to reproduce Release 4.
    not part of the control variables, eccov4r4_wspeed_YYYY contains no wind speed 
    control adjustment. 
 ```
-[Input Forcing Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_forcing/README)
 * Input init: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init 
 * Input ecco: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_ecco   
  
