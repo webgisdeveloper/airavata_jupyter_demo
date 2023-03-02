@@ -6,7 +6,7 @@ https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/
 The total size of the forcing and other input files is about 200GB.   
 All forcing and input files are necessary to reproduce Release 4.  
 * Input forcing: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_forcing   
-[Input Forcing Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_forcing/README)
+[Input forcing Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_forcing/README)
 ```
 - This directory contains the 'ECCO version 4, release 4' atmospheric forcing that is the sum of ERA-Interim 
    and atmospheric control adjustment. 
@@ -27,7 +27,7 @@ All forcing and input files are necessary to reproduce Release 4.
    control adjustment. 
 ```
 * Input init: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init   
-[Input Init Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init/README)  
+[Input init Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init/README)  
 ```
 - This directory contains binary files needed to initialize MITgcm to run 'ECCO version 4, release 4':
   README                               This file
@@ -45,11 +45,23 @@ All forcing and input files are necessary to reproduce Release 4.
   error_weight                         control weights and data errors
 ```
 * Input ecco: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_ecco   
+[Input ecco Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_ecco/README)
+```
+- This directory contains the 'ECCO version 4, release 4' observation input:
+  README                            This file
+  input_bp                          ocean bottom pressure
+  input_insitu                      in situ profiles
+  input_nsidc                       sea-ice concentration
+  input_other                       other observations
+  input_sla                         altimetry data
+  input_sss                         Aquarius sea surface salinity
+  input_sst                         sea surface temperature
+```
  
 While the requested time of 24 hours is usually sufficient
 to finish V4r4’s 26-year model integration time period on [Pleiades Supercomputer](https://www.nas.nasa.gov/hecc/resources/pleiades.html), with the
 provided [data.diagnostics files](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init/NAMELIST/data.diagnostics), one may have to increase the time if to run the
-job on a different machine or to output significantly more model diagnostics. 
+job on a different machine or to output significantly more model diagnostics. [Available_Diagnostics](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/doc/available_diagnostics.log)  
 
 reference: [V4r4 Reproduction Guide](https://ecco-group.org/docs/v4r4_reproduction_howto.pdf)
 ## ECCO output data
