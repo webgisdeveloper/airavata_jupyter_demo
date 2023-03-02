@@ -26,7 +26,24 @@ All forcing and input files are necessary to reproduce Release 4.
    not part of the control variables, eccov4r4_wspeed_YYYY contains no wind speed 
    control adjustment. 
 ```
-* Input init: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init 
+* Input init: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init   
+[Input Init Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init/README)  
+```
+- This directory contains binary files needed to initialize MITgcm to run 'ECCO version 4, release 4':
+  README                               This file
+  pickup*.data                         initial condition
+  bathy_eccollc_90x50_min2pts.bin      bathymetry 
+  geothermalFlux.bin                   geothermal heating (time-mean climatology)
+  runoff*.bin                          river runoff (monthly climatology)
+  smooth*                              settings for MITgcm/pkg/smooth
+  fenty_biharmonic_visc_v11.bin        biharmonic viscosity 
+  total_diffkr_r009bit11.bin           vert. diff. of release 1 (this field plus xx is the total)
+  total_kapgm_r009bit11.bin            Kappa GM of release 1 (this field plus xx is the total)
+  total_kapredi_r009bit11.bin          Kappa Redi of release 1 (this field plus xx is the total)
+  xx_*.*                               control adjustments 
+  NAMELIST                             namelists
+  error_weight                         control weights and data errors
+```
 * Input ecco: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_ecco   
  
 While the requested time of 24 hours is usually sufficient
