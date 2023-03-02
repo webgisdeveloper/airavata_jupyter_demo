@@ -5,7 +5,8 @@ The forcing and other input files are stored on Release 4’s data server at
 https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/  
 The total size of the forcing and other input files is about 200GB.   
 All forcing and input files are necessary to reproduce Release 4.  
-* Input forcing: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_forcing 
+* Input forcing: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_forcing   
+[Input Forcing Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_forcing/README)
 ```
 - This directory contains the 'ECCO version 4, release 4' atmospheric forcing that is the sum of ERA-Interim 
    and atmospheric control adjustment. 
@@ -25,6 +26,7 @@ All forcing and input files are necessary to reproduce Release 4.
    not part of the control variables, eccov4r4_wspeed_YYYY contains no wind speed 
    control adjustment. 
 ```
+[Input Forcing Readme](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_forcing/README)
 * Input init: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_init 
 * Input ecco: https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/input_ecco   
  
