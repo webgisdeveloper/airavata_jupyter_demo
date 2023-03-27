@@ -20,3 +20,6 @@ The ECCO v4 state estimate is the output of a free-running simulation of a globa
 [MITgcm (MIT General Circulation Model)](http://mitgcm.org/) is a numerical model designed for study of the atmosphere, ocean, and climate.  
 [MITgcm source code](https://github.com/MITgcm/MITgcm)  
 [MITgcm’s user manual](https://mitgcm.readthedocs.io/en/latest/)  
+
+## Development
+[VEDA-ECCO cli-toolbox](https://github.com/NASA-IMPACT/veda-research-playground/tree/main/veda-cli)
