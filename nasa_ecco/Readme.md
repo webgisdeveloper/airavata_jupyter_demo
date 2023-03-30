@@ -8,7 +8,8 @@ The ["Estimating the Circulation and Climate of the Ocean" (ECCO)](https://ecco-
 ## ECCO Software 
 The ECCO v4 state estimate is the output of a free-running simulation of a global ca. 1-degree configuration of the [MITgcm](http://mitgcm.org/).
 * [V4r4 Reproduction Guide](https://ecco-group.org/docs/v4r4_reproduction_howto.pdf) 
-* [ECCO-v4-Configurations](https://github.com/ECCO-GROUP/ECCO-v4-Configurations)
+* [ECCO-v4-Configurations](https://github.com/ECCO-GROUP/ECCO-v4-Configurations)  
+* [ECCO Input files](https://ecco.jpl.nasa.gov/drive/files/Version4/Release4/)  
 
 ### Tutorials
 [ECCO Version 4 Tutorial](https://ecco-v4-python-tutorial.readthedocs.io/)  
